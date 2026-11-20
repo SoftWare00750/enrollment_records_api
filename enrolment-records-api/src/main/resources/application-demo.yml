@@ -1,0 +1,5 @@
+# Activate with: --spring.profiles.active=demo
+# Adds the sample reference data (academic years, grade levels, class offerings).
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed

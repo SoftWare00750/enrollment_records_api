@@ -1,0 +1,63 @@
+### Works with the IntelliJ HTTP client and the VS Code "REST Client" extension.
+@base = http://localhost:8080
+@actor = registrar.jane
+
+### Reference data
+GET {{base}}/api/academic-years
+
+###
+GET {{base}}/api/grade-levels
+
+###
+GET {{base}}/api/offerings
+
+### Register an application
+POST {{base}}/api/applications
+Content-Type: application/json
+X-Actor: {{actor}}
+
+{
+  "applicant": { "firstName": "Ada", "lastName": "Okafor", "dateOfBirth": "2020-03-10" },
+  "guardian": { "fullName": "Ngozi Okafor", "email": "ngozi@example.com", "phone": "+2348012345678" },
+  "academicYearId": 1,
+  "gradeLevelId": 1,
+  "documents": [
+    { "type": "BIRTH_CERTIFICATE", "nameOnDocument": "Ada Okafor", "dateOnDocument": "2020-03-10" },
+    { "type": "IMMUNISATION_RECORD" },
+    { "type": "PASSPORT_PHOTO" }
+  ]
+}
+
+### Run the eligibility rules
+POST {{base}}/api/applications/1/eligibility-check
+X-Actor: {{actor}}
+
+### Advisory document review (never changes the application)
+GET {{base}}/api/applications/1/document-review
+
+### Admit / waitlist / reject
+POST {{base}}/api/applications/1/decision
+Content-Type: application/json
+X-Actor: {{actor}}
+
+{ "decision": "ADMITTED", "reason": "Meets all criteria" }
+
+### History
+GET {{base}}/api/applications/1/audit
+
+###
+GET {{base}}/api/applications/1/decisions
+
+### Search
+GET {{base}}/api/applications?status=ADMITTED&gradeLevelId=1&page=0&size=20
+
+### Add a late document (resets eligibility to PENDING)
+POST {{base}}/api/applications/1/documents
+Content-Type: application/json
+X-Actor: {{actor}}
+
+{ "type": "IMMUNISATION_RECORD" }
+
+### Withdraw
+POST {{base}}/api/applications/1/withdraw
+X-Actor: {{actor}}
